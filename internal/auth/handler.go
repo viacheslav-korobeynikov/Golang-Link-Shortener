@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"regexp"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/response"
 )
@@ -41,16 +41,14 @@ func (handler *AuthHandler) Login() http.HandlerFunc {
 			response.Json(w, "Email required", 400)
 			return
 		}
-		//Проверка регулярным выражением
-		match, _ := regexp.MatchString(`[A-Za-z0-9\._%+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}`, payload.Email)
-		if !match {
-			response.Json(w, "Wrong email", 400)
+		//Вызов пакета Validator
+		validate := validator.New()
+		err = validate.Struct(payload)
+		if err != nil {
+			response.Json(w, err.Error(), 400)
 			return
 		}
-		if payload.Password == "" {
-			response.Json(w, "Password required", 400)
-			return
-		}
+
 		fmt.Println(payload)
 		//Возвращаем ответ метода
 		data := LoginResponse{
