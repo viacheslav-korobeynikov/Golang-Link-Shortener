@@ -33,6 +33,16 @@ func (handler *AuthHandler) Login() http.HandlerFunc {
 		err := json.NewDecoder(request.Body).Decode(&payload)
 		if err != nil {
 			response.Json(w, err.Error(), 400)
+			return
+		}
+		// Простая валидация, что передана не пустая строка
+		if payload.Email == "" {
+			response.Json(w, "Email required", 400)
+			return
+		}
+		if payload.Password == "" {
+			response.Json(w, "Password required", 400)
+			return
 		}
 		fmt.Println(payload)
 		//Возвращаем ответ метода
