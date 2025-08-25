@@ -42,9 +42,10 @@ func (handler *AuthHandler) Login() http.HandlerFunc {
 			return
 		}
 		//Проверка регулярным выражением
-		reg, _ := regexp.Compile(`[A-Za-z0-9\._%+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}`)
-		if !reg.MatchString(payload.Email) {
+		match, _ := regexp.MatchString(`[A-Za-z0-9\._%+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}`, payload.Email)
+		if !match {
 			response.Json(w, "Wrong email", 400)
+			return
 		}
 		if payload.Password == "" {
 			response.Json(w, "Password required", 400)
