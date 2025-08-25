@@ -1,11 +1,11 @@
 package auth
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/response"
 )
 
 type AuthHandlerDependency struct {
@@ -30,12 +30,10 @@ func (handler *AuthHandler) Login() http.HandlerFunc {
 		fmt.Println(handler.Config.Auth.Secret)
 		fmt.Println("Login")
 		//Возвращаем ответ метода
-		res := LoginResponse{
+		data := LoginResponse{
 			Token: "123",
 		}
-		w.Header().Set("Content-Type", "application/json") // Установка хедера
-		w.WriteHeader(201)                                 // Установка статус-кода ответа
-		json.NewEncoder(w).Encode(res)                     //Записываем ответ в json
+		response.Json(w, data, 200)
 	}
 }
 
