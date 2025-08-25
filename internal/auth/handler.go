@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"regexp"
 
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/response"
@@ -39,6 +40,11 @@ func (handler *AuthHandler) Login() http.HandlerFunc {
 		if payload.Email == "" {
 			response.Json(w, "Email required", 400)
 			return
+		}
+		//Проверка регулярным выражением
+		reg, _ := regexp.Compile(`[A-Za-z0-9\._%+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}`)
+		if !reg.MatchString(payload.Email) {
+			response.Json(w, "Wrong email", 400)
 		}
 		if payload.Password == "" {
 			response.Json(w, "Password required", 400)
