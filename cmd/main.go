@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/auth"
 )
 
 func main() {
+	conf := configs.LoadConfig() // Достаем значения конфигов
 	router := http.NewServeMux() // Роутниг
-	auth.NewAuthHandler(router)
+	auth.NewAuthHandler(router, auth.AuthHandlerDependency{
+		Config: conf,
+	})
 	//Создание сервера
 	server := http.Server{
 		Addr:    ":8081",

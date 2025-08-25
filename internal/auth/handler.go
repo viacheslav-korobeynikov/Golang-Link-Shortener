@@ -3,12 +3,22 @@ package auth
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
 )
 
-type AuthHandler struct{}
+type AuthHandlerDependency struct {
+	*configs.Config
+}
 
-func NewAuthHandler(router *http.ServeMux) {
-	handler := &AuthHandler{}
+type AuthHandler struct {
+	*configs.Config
+}
+
+func NewAuthHandler(router *http.ServeMux, dependency AuthHandlerDependency) {
+	handler := &AuthHandler{
+		Config: dependency.Config,
+	} // Передача конфига
 	router.HandleFunc("POST /auth/login", handler.Login())
 	router.HandleFunc("POST /auth/register", handler.Register())
 }
@@ -16,6 +26,7 @@ func NewAuthHandler(router *http.ServeMux) {
 // Обработчик для Login
 func (handler *AuthHandler) Login() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(handler.Config.Auth.Secret)
 		fmt.Println("Login")
 	}
 }
