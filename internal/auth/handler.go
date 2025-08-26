@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/req"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/response"
 )
 
@@ -26,7 +27,12 @@ func NewAuthHandler(router *http.ServeMux, dependency AuthHandlerDependency) {
 
 // Обработчик для Login
 func (handler *AuthHandler) Login() http.HandlerFunc {
-	return func(w http.ResponseWriter, request *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		body, err := req.HandleBody[LoginRequest](&w, r)
+		if err != nil {
+			return
+		}
+		fmt.Println(body)
 		//Возвращаем ответ метода
 		data := LoginResponse{
 			Token: "123",
@@ -38,6 +44,14 @@ func (handler *AuthHandler) Login() http.HandlerFunc {
 // Обработчик для Register
 func (handler *AuthHandler) Register() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Register")
+		body, err := req.HandleBody[RegisterRequest](&w, r)
+		if err != nil {
+			return
+		}
+		fmt.Println(body)
+		data := RegisterResponse{
+			Id: "id123",
+		}
+		response.Json(w, data, 200)
 	}
 }
