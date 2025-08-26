@@ -1,11 +1,9 @@
 package auth
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/response"
 )
@@ -29,27 +27,6 @@ func NewAuthHandler(router *http.ServeMux, dependency AuthHandlerDependency) {
 // Обработчик для Login
 func (handler *AuthHandler) Login() http.HandlerFunc {
 	return func(w http.ResponseWriter, request *http.Request) {
-		//Чтение body
-		var payload LoginRequest
-		err := json.NewDecoder(request.Body).Decode(&payload)
-		if err != nil {
-			response.Json(w, err.Error(), 400)
-			return
-		}
-		// Простая валидация, что передана не пустая строка
-		if payload.Email == "" {
-			response.Json(w, "Email required", 400)
-			return
-		}
-		//Вызов пакета Validator
-		validate := validator.New()
-		err = validate.Struct(payload)
-		if err != nil {
-			response.Json(w, err.Error(), 400)
-			return
-		}
-
-		fmt.Println(payload)
 		//Возвращаем ответ метода
 		data := LoginResponse{
 			Token: "123",
