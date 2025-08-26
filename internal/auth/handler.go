@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
-	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/req"
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/req"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/response"
 )
 
