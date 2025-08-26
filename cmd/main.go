@@ -6,10 +6,12 @@ import (
 
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/auth"
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/db"
 )
 
 func main() {
 	conf := configs.LoadConfig() // Достаем значения конфигов
+	_ = db.NewDb(conf)           //Инициализация БД
 	router := http.NewServeMux() // Роутниг
 	auth.NewAuthHandler(router, auth.AuthHandlerDependency{
 		Config: conf,
