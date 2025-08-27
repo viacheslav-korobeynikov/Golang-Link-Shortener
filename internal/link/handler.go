@@ -1,6 +1,7 @@
 package link
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
@@ -36,7 +37,8 @@ func (handler *LinkHandler) UpdateLink() http.HandlerFunc {
 
 func (handler *LinkHandler) DeleteLink() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		id := r.PathValue("id")
+		fmt.Println(id)
 	}
 }
 
