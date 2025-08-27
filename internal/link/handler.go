@@ -3,20 +3,20 @@ package link
 import (
 	"fmt"
 	"net/http"
-
-	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
 )
 
 type LinkHandlerDeps struct {
-	*configs.Config
+	LinkRepository *LinkRepository
 }
 
 type LinkHandler struct {
-	*configs.Config
+	LinkRepository *LinkRepository
 }
 
 func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
-	handler := &LinkHandler{}
+	handler := &LinkHandler{
+		LinkRepository: deps.LinkRepository,
+	}
 	router.HandleFunc("POST /link", handler.CreateLink())
 	router.HandleFunc("PATCH /link/{id}", handler.UpdateLink())
 	router.HandleFunc("DELETE /link/{id}", handler.DeleteLink())

@@ -12,15 +12,20 @@ import (
 
 func main() {
 	conf := configs.LoadConfig() // Достаем значения конфигов
-	_ = db.NewDb(conf)           //Инициализация БД
+	db := db.NewDb(conf)         //Инициализация БД
 	router := http.NewServeMux() // Роутниг
+	//Репозитории
+	linkRepository := link.NewLinkRepository(db)
+
 	//Обработчики (Handlers)
 	//Обработчик авторизации/регистрации
 	auth.NewAuthHandler(router, auth.AuthHandlerDependency{
 		Config: conf,
 	})
 	//Обработчик CRUD для ссылок
-	link.NewLinkHandler(router, link.LinkHandlerDeps{})
+	link.NewLinkHandler(router, link.LinkHandlerDeps{
+		LinkRepository: linkRepository,
+	})
 	//Создание сервера
 	server := http.Server{
 		Addr:    ":8081",
