@@ -13,6 +13,10 @@ func NewLinkRepository(database *db.Db) *LinkRepository {
 }
 
 //Функция создания записи в БД
-func (repo *LinkRepository) Crete(link *Link) {
-
+func (repo *LinkRepository) Create(link *Link) (*Link, error) {
+	result := repo.Database.DB.Create(link)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return link, nil
 }

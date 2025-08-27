@@ -3,6 +3,9 @@ package link
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/req"
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/response"
 )
 
 type LinkHandlerDeps struct {
@@ -25,7 +28,21 @@ func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
 
 func (handler *LinkHandler) CreateLink() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		//Получение body из запроса
+		body, err := req.HandleBody[LinkCreateRequest](&w, r)
+		if err != nil {
+			return
+		}
+		//Создали сущность в БД
+		link := NewLink(body.Url)
+		// Записали в репозиторий
+		cretedLink, err := handler.LinkRepository.Create(link)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		//Возвращаем ответ
+		response.Json(w, cretedLink, 201)
 	}
 }
 
