@@ -3,9 +3,11 @@ package link
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/req"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/response"
+	"gorm.io/gorm"
 )
 
 type LinkHandlerDeps struct {
@@ -61,7 +63,25 @@ func (handler *LinkHandler) CreateLink() http.HandlerFunc {
 // Обновление/редактирование ссылки
 func (handler *LinkHandler) UpdateLink() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		//Получение body из запроса
+		body, err := req.HandleBody[LinkUpdateRequest](&w, r)
+		if err != nil {
+			return
+		}
+		idStr := r.PathValue("id")
+		id, err := strconv.ParseUint(idStr, 10, 32)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+		link, err := handler.LinkRepository.Update(&Link{
+			Model: gorm.Model{ID: uint(id)},
+			Url:   body.Url,
+			Hash:  body.Hash,
+		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+		response.Json(w, link, 200)
 	}
 }
 
