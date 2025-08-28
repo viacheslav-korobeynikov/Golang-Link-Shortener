@@ -34,8 +34,19 @@ func (handler *LinkHandler) CreateLink() http.HandlerFunc {
 		if err != nil {
 			return
 		}
-		//Создали сущность в БД
+		//Создали сущность в БД (генерим и записываем хэш)
 		link := NewLink(body.Url)
+		for {
+			//Проверяем есть ли такое же значение хэша в БД
+			exsitedLink, _ := handler.LinkRepository.GetByHash(link.Hash)
+			// Если значение не сушествует - выходим из цикла
+			if exsitedLink == nil {
+				break
+			}
+			// Если значение существует, заново генерим хэш
+			link.GenerateHash()
+		}
+
 		// Записали в репозиторий
 		cretedLink, err := handler.LinkRepository.Create(link)
 		if err != nil {
