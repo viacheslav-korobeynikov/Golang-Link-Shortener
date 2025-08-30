@@ -1,7 +1,6 @@
 package link
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -68,11 +67,14 @@ func (handler *LinkHandler) UpdateLink() http.HandlerFunc {
 		if err != nil {
 			return
 		}
+		//Получение id из path запроса
 		idStr := r.PathValue("id")
+		// Преобразование строки в число
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
+		// Обновление записи
 		link, err := handler.LinkRepository.Update(&Link{
 			Model: gorm.Model{ID: uint(id)},
 			Url:   body.Url,
@@ -81,15 +83,24 @@ func (handler *LinkHandler) UpdateLink() http.HandlerFunc {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
+		// Возвращение ответа
 		response.Json(w, link, 200)
 	}
 }
 
-// Удаление
+// Метод удаления ссылки
 func (handler *LinkHandler) DeleteLink() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := r.PathValue("id")
-		fmt.Println(id)
+		idStr := r.PathValue("id")
+		id, err := strconv.ParseUint(idStr, 10, 32)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+		err = handler.LinkRepository.Delete(uint(id))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		response.Json(w, nil, 200)
 	}
 }
 
