@@ -27,10 +27,17 @@ func main() {
 	link.NewLinkHandler(router, link.LinkHandlerDeps{
 		LinkRepository: linkRepository,
 	})
+
+	// Middlewares
+	stack := middlware.Chain(
+		middlware.CORS,
+		middlware.Logging,
+	)
+
 	//Создание сервера
 	server := http.Server{
 		Addr:    ":8081",
-		Handler: middlware.CORS(middlware.Logging(router)), // Добавлен middleware для логирования
+		Handler: stack(router), // Добавлен chain для middleware
 	}
 
 	fmt.Println("Server is listening on port 8081")
