@@ -30,7 +30,7 @@ func main() {
 	//Создание сервера
 	server := http.Server{
 		Addr:    ":8081",
-		Handler: middlware.Logging(router), // Добавлен middleware для логирования
+		Handler: middlware.CORS(middlware.Logging(router)), // Добавлен middleware для логирования
 	}
 
 	fmt.Println("Server is listening on port 8081")
