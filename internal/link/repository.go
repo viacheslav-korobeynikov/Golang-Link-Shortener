@@ -27,6 +27,7 @@ func (repo *LinkRepository) Create(link *Link) (*Link, error) {
 // Функция получения данных из БД
 func (repo *LinkRepository) GetByHash(hash string) (*Link, error) {
 	var link Link
+	// Поиск в БД
 	result := repo.Database.DB.First(&link, "hash = ?", hash)
 	if result.Error != nil {
 		return nil, result.Error
@@ -50,4 +51,14 @@ func (repo *LinkRepository) Delete(id uint) error {
 		return result.Error
 	}
 	return nil
+}
+
+// Функция поиска существующего значения в БД
+func (repo *LinkRepository) GetById(id uint) (*Link, error) {
+	var link Link
+	result := repo.Database.DB.First(&link, id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &link, nil
 }

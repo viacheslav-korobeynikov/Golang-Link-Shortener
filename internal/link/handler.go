@@ -73,6 +73,7 @@ func (handler *LinkHandler) UpdateLink() http.HandlerFunc {
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 		// Обновление записи
 		link, err := handler.LinkRepository.Update(&Link{
@@ -82,6 +83,7 @@ func (handler *LinkHandler) UpdateLink() http.HandlerFunc {
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 		// Возвращение ответа
 		response.Json(w, link, 200)
@@ -91,14 +93,25 @@ func (handler *LinkHandler) UpdateLink() http.HandlerFunc {
 // Метод удаления ссылки
 func (handler *LinkHandler) DeleteLink() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Парсим id
 		idStr := r.PathValue("id")
 		id, err := strconv.ParseUint(idStr, 10, 32)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
+		// Проверяем наличие записи в БД
+		_, err = handler.LinkRepository.GetById(uint(id))
+		// Если запись не найдена, то возвращаем ошибку
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+		// Если запись найдена, то удаляем
 		err = handler.LinkRepository.Delete(uint(id))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 		response.Json(w, nil, 200)
 	}
