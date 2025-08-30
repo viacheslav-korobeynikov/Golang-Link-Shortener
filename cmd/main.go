@@ -32,6 +32,7 @@ func main() {
 	stack := middlware.Chain(
 		middlware.CORS,
 		middlware.Logging,
+		middlware.IsAuthed,
 	)
 
 	//Создание сервера
