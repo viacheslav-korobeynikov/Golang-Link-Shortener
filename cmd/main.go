@@ -8,6 +8,7 @@ import (
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/auth"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/link"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/db"
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/middlware"
 )
 
 func main() {
@@ -29,7 +30,7 @@ func main() {
 	//Создание сервера
 	server := http.Server{
 		Addr:    ":8081",
-		Handler: router,
+		Handler: middlware.Logging(router), // Добавлен middleware для логирования
 	}
 
 	fmt.Println("Server is listening on port 8081")
