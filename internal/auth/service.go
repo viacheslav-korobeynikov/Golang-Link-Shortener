@@ -24,6 +24,7 @@ func (service *AuthService) LoginUser(email, password string) (string, error) {
 	if existedUser == nil {
 		return "", errors.New(ErrWrongCreds)
 	}
+	//Сравнимаем сохраненный хэш пароля с данными из тела запроса
 	err := bcrypt.CompareHashAndPassword([]byte(existedUser.Password), []byte(password))
 	if err != nil {
 		return "", errors.New(ErrWrongCreds)
