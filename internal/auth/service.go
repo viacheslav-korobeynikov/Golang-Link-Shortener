@@ -17,6 +17,20 @@ func NewAuthService(userRepository *user.UserRepository) *AuthService {
 	}
 }
 
+func (service *AuthService) LoginUser(email, password string) (string, error) {
+	// Проверяем существует ли пользователь с таким email в БД
+	existedUser, _ := service.UserRepository.FindUserByEmail(email)
+	// Если существует возвращаем ошибку
+	if existedUser == nil {
+		return "", errors.New(ErrWrongCreds)
+	}
+	err := bcrypt.CompareHashAndPassword([]byte(existedUser.Password), []byte(password))
+	if err != nil {
+		return "", errors.New(ErrWrongCreds)
+	}
+	return existedUser.Email, nil
+}
+
 // Бизнес логика создания пользователя
 func (service *AuthService) CreateUser(email, password, name string) (string, error) {
 	// Проверяем существует ли пользователь с таким email в БД
