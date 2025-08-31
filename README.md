@@ -6,3 +6,8 @@
 ```
 docker compose up -d
 ```
+
+## Выполнение автомиграции
+```
+go run migrations/auto.go
+```
