@@ -7,6 +7,7 @@ import (
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/auth"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/link"
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/user"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/db"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/middlware"
 )
@@ -17,11 +18,16 @@ func main() {
 	router := http.NewServeMux() // Роутниг
 	//Репозитории
 	linkRepository := link.NewLinkRepository(db)
+	userRepository := user.NewUserRepository(db)
+
+	// Services
+	authService := auth.NewAuthService(userRepository)
 
 	//Обработчики (Handlers)
 	//Обработчик авторизации/регистрации
 	auth.NewAuthHandler(router, auth.AuthHandlerDependency{
-		Config: conf,
+		Config:      conf,
+		AuthService: authService,
 	})
 	//Обработчик CRUD для ссылок
 	link.NewLinkHandler(router, link.LinkHandlerDeps{

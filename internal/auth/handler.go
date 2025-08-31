@@ -11,15 +11,18 @@ import (
 
 type AuthHandlerDependency struct {
 	*configs.Config
+	*AuthService
 }
 
 type AuthHandler struct {
 	*configs.Config
+	*AuthService
 }
 
 func NewAuthHandler(router *http.ServeMux, dependency AuthHandlerDependency) {
 	handler := &AuthHandler{
-		Config: dependency.Config,
+		Config:      dependency.Config,
+		AuthService: dependency.AuthService,
 	} // Передача конфига
 	router.HandleFunc("POST /auth/login", handler.Login())
 	router.HandleFunc("POST /auth/register", handler.Register())
@@ -48,10 +51,7 @@ func (handler *AuthHandler) Register() http.HandlerFunc {
 		if err != nil {
 			return
 		}
-		fmt.Println(body)
-		data := RegisterResponse{
-			Id: "id123",
-		}
-		response.Json(w, data, 200)
+		// Вызываем бизнес-логику создания пользователя из service
+		handler.AuthService.CreateUser(body.Email, body.Password, body.Name)
 	}
 }
