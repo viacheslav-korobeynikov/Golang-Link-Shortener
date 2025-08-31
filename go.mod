@@ -9,7 +9,11 @@ require (
 	gorm.io/gorm v1.30.1
 )
 
-require golang.org/x/crypto v0.41.0
+require (
+	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/golang-jwt/jwt/v5 v5.3.0
+	golang.org/x/crypto v0.41.0
+)
 
 require (
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
