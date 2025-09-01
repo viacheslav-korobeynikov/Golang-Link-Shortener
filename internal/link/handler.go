@@ -1,6 +1,7 @@
 package link
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -65,6 +66,11 @@ func (handler *LinkHandler) CreateLink() http.HandlerFunc {
 // Обновление/редактирование ссылки
 func (handler *LinkHandler) UpdateLink() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Читаем email из контекста
+		email, ok := r.Context().Value(middlware.ContextEmailKey).(string)
+		if ok {
+			fmt.Println(email)
+		}
 		//Получение body из запроса
 		body, err := req.HandleBody[LinkUpdateRequest](&w, r)
 		if err != nil {
