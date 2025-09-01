@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/middlware"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/req"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/response"
@@ -12,6 +13,7 @@ import (
 
 type LinkHandlerDeps struct {
 	LinkRepository *LinkRepository
+	Config         *configs.Config
 }
 
 type LinkHandler struct {
@@ -22,9 +24,9 @@ func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
 	handler := &LinkHandler{
 		LinkRepository: deps.LinkRepository,
 	}
-	router.Handle("POST /link", middlware.IsAuthed(handler.CreateLink()))
-	router.Handle("PATCH /link/{id}", middlware.IsAuthed(handler.UpdateLink()))
-	router.Handle("DELETE /link/{id}", middlware.IsAuthed(handler.DeleteLink()))
+	router.Handle("POST /link", middlware.IsAuthed(handler.CreateLink(), deps.Config))
+	router.Handle("PATCH /link/{id}", middlware.IsAuthed(handler.UpdateLink(), deps.Config))
+	router.Handle("DELETE /link/{id}", middlware.IsAuthed(handler.DeleteLink(), deps.Config))
 	router.HandleFunc("GET /{hash}", handler.GoTo())
 }
 

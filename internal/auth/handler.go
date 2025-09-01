@@ -43,7 +43,9 @@ func (handler *AuthHandler) Login() http.HandlerFunc {
 			return
 		}
 		// Если авторизация завершилась успешно - генерируем access_token
-		token, err := jwt.NewJWT(handler.Config.Auth.Secret).Create(email)
+		token, err := jwt.NewJWT(handler.Config.Auth.Secret).Create(jwt.JWTData{
+			Email: email,
+		})
 		// Если не удалось сгенерировать токен - возвращаем 500
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -70,7 +72,9 @@ func (handler *AuthHandler) Register() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
-		token, err := jwt.NewJWT(handler.Config.Auth.Secret).Create(email)
+		token, err := jwt.NewJWT(handler.Config.Auth.Secret).Create(jwt.JWTData{
+			Email: email,
+		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

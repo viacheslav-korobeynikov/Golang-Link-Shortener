@@ -32,6 +32,7 @@ func main() {
 	//Обработчик CRUD для ссылок
 	link.NewLinkHandler(router, link.LinkHandlerDeps{
 		LinkRepository: linkRepository,
+		Config:         conf,
 	})
 
 	// Middlewares
