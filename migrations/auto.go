@@ -5,6 +5,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/link"
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/stat"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/user"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -21,5 +22,5 @@ func main() {
 		panic(err)
 	}
 	// Вызываем автомиграцию
-	db.AutoMigrate(&link.Link{}, &user.User{})
+	db.AutoMigrate(&link.Link{}, &user.User{}, &stat.Stat{})
 }
