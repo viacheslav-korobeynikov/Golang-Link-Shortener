@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/stat"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/middlware"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/req"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/response"
@@ -14,16 +15,19 @@ import (
 
 type LinkHandlerDeps struct {
 	LinkRepository *LinkRepository
+	StatRepository *stat.StatRepository
 	Config         *configs.Config
 }
 
 type LinkHandler struct {
 	LinkRepository *LinkRepository
+	StatRepository *stat.StatRepository
 }
 
 func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
 	handler := &LinkHandler{
 		LinkRepository: deps.LinkRepository,
+		StatRepository: deps.StatRepository,
 	}
 	router.Handle("POST /link", middlware.IsAuthed(handler.CreateLink(), deps.Config))
 	router.Handle("PATCH /link/{id}", middlware.IsAuthed(handler.UpdateLink(), deps.Config))
@@ -137,6 +141,7 @@ func (handler *LinkHandler) GoTo() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
+		handler.StatRepository.AddClick(link.ID)
 		//Редирект пользователя по сслыке
 		http.Redirect(w, r, link.Url, http.StatusTemporaryRedirect)
 	}

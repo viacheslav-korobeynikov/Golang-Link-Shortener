@@ -7,6 +7,7 @@ import (
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/configs"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/auth"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/link"
+	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/stat"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/internal/user"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/db"
 	"github.com/viacheslav-korobeynikov/Golang-Link-Shortener/pkg/middlware"
@@ -19,6 +20,7 @@ func main() {
 	//Репозитории
 	linkRepository := link.NewLinkRepository(db)
 	userRepository := user.NewUserRepository(db)
+	statRepository := stat.NewStatRepository(db)
 
 	// Services
 	authService := auth.NewAuthService(userRepository)
@@ -32,6 +34,7 @@ func main() {
 	//Обработчик CRUD для ссылок
 	link.NewLinkHandler(router, link.LinkHandlerDeps{
 		LinkRepository: linkRepository,
+		StatRepository: statRepository,
 		Config:         conf,
 	})
 
