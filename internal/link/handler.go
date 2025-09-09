@@ -28,7 +28,8 @@ func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
 	router.Handle("POST /link", middlware.IsAuthed(handler.CreateLink(), deps.Config))
 	router.Handle("PATCH /link/{id}", middlware.IsAuthed(handler.UpdateLink(), deps.Config))
 	router.Handle("DELETE /link/{id}", middlware.IsAuthed(handler.DeleteLink(), deps.Config))
-	router.HandleFunc("GET /{hash}", handler.GoTo())
+	router.Handle("GET /{hash}", middlware.IsAuthed(handler.GoTo(), deps.Config))
+	router.Handle("GET /link", middlware.IsAuthed(handler.GetLinksList(), deps.Config))
 }
 
 // Создание ссылки
@@ -138,5 +139,27 @@ func (handler *LinkHandler) GoTo() http.HandlerFunc {
 		}
 		//Редирект пользователя по сслыке
 		http.Redirect(w, r, link.Url, http.StatusTemporaryRedirect)
+	}
+}
+
+func (handler *LinkHandler) GetLinksList() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+		if err != nil {
+			http.Error(w, "Invalid limit", http.StatusBadRequest)
+			return
+		}
+		offset, err := strconv.Atoi(r.URL.Query().Get("offset"))
+		if err != nil {
+			http.Error(w, "Invalid offset", http.StatusBadRequest)
+			return
+		}
+		links := handler.LinkRepository.GetLinksList(limit, offset)
+		count := handler.LinkRepository.Count()
+		response.Json(w, GetAllLinksResponse{
+			Links: links,
+			Count: count,
+		}, 200)
+
 	}
 }
